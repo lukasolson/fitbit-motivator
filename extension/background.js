@@ -1,12 +1,15 @@
 (function () {
-	chrome.browserAction.setBadgeBackgroundColor({color: "#677984"});
-
 	var socket = io.connect("http://askullsoon.com:1114"),
 		today = new Date().getDate(),
+		canvas = document.getElementById("canvas"),
+		context = canvas.getContext("2d"),
 		tab,
 		stepsCount,
 		stepsGoal,
 		indicatorIndex;
+
+	chrome.browserAction.setBadgeBackgroundColor({color: "#677984"});
+	context.lineWidth = 2;
 
 	socket.on("requestToken", function (requestToken) {
 		chrome.tabs.create({
@@ -46,40 +49,44 @@
 			stepsBehind = stepsExpected - stepsCount,
 			stepsNeeded = stepsBehind / (1 - stepsGoal / stepsPerMinute / 60 / 24);
 
-		return stepsBehind > 0 ? stepsNeeded / stepsPerMinute : stepsBehind / (stepsGoal / 24 / 60);
+		return stepsNeeded / stepsPerMinute;
 	}
 
 	function renderBrowserAction(minutesNeeded) {
-		var newIndicatorIndex = minutesNeeded <= 0 ? 0 :
-			(minutesNeeded >= 45 ? 45 : Math.ceil(minutesNeeded / 15) * 15);
+		var newIndicatorIndex = Math.max(0, Math.min(45, Math.ceil(minutesNeeded / 15) * 15));
 
 		if (indicatorIndex !== newIndicatorIndex) {
 			if (newIndicatorIndex > indicatorIndex && indicatorIndex > 0) webkitNotifications.createNotification("icon48.png", "Get Walking!", "You need to walk for " + minutesNeeded  + " minute(s).").show();
 
-			var colors = COLORS[newIndicatorIndex],
-				canvas = document.getElementById("canvas"),
-				context = canvas.getContext("2d");
-			context.clearRect(0, 0, 19, 19);
-			context.fillStyle = colors[0];
-			context.strokeStyle = colors[1];
-			context.lineWidth = 2;
-
-			context.beginPath();
-			context.arc(9.5, 9.5, 8, 0, Math.PI * 2);
-			context.fill(); context.stroke();
-
-			chrome.browserAction.setIcon({
-				imageData: context.getImageData(0, 0, 19, 19)
-			});
-
+			renderBrowserActionIcon(newIndicatorIndex);
 			indicatorIndex = newIndicatorIndex;
 		}
 
-		chrome.browserAction.setBadgeText({
-			text: Math.abs(minutesNeeded) + ""
-		});
+		if (minutesNeeded > 0) {
+			chrome.browserAction.setBadgeText({
+				text: "" + minutesNeeded
+			});
 
-		chrome.browserAction.setTitle({title: (minutesNeeded > 0 ? "Walk for " : "Rest for ") + Math.abs(minutesNeeded) + " minute(s)"});
+			chrome.browserAction.setTitle({title: "Walk for " + minutesNeeded + " minute(s)"});
+		} else {
+			chrome.browserAction.setBadgeText({text: ""});
+		}
+	}
+
+	function renderBrowserActionIcon(colorIndex) {
+		var colors = COLORS[colorIndex];
+
+		context.clearRect(0, 0, 19, 19);
+		context.fillStyle = colors[0];
+		context.strokeStyle = colors[1];
+
+		context.beginPath();
+		context.arc(9.5, 9.5, 8, 0, Math.PI * 2);
+		context.fill(); context.stroke();
+
+		chrome.browserAction.setIcon({
+			imageData: context.getImageData(0, 0, 19, 19)
+		});
 	}
 
 	var COLORS = {
