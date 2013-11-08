@@ -1,0 +1,21 @@
+{
+	"manifest_version": 2,
+	"name": "Fitbit Motivator",
+	"description": "The extension that motivates you to go out and get back on track to meet your goals.",
+	"version": "0.1.5",
+	"icons": {
+		"16": "images/icon16.png",
+		"48": "images/icon48.png",
+		"128": "images/icon128.png"
+	},
+	"permissions": ["notifications", "alarms"],
+	"background": {
+		"page": "background.html"
+	},
+	"browser_action": {
+		"default_title": "Fitbit Motivator"
+	},
+	"web_accessible_resources": [
+		"icon48.png"
+	]
+}
