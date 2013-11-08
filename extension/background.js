@@ -1,4 +1,6 @@
 (function () {
+	chrome.browserAction.setBadgeBackgroundColor({color: "#677984"});
+
 	var socket = io.connect("http://askullsoon.com:1114"),
 		today = new Date().getDate(),
 		tab,
@@ -48,34 +50,33 @@
 	}
 
 	function renderBrowserAction(minutesNeeded) {
-		var canvas = document.getElementById("canvas"),
-			context = canvas.getContext("2d");
-
 		var newIndicatorIndex = minutesNeeded <= 0 ? 0 :
 			(minutesNeeded >= 45 ? 45 : Math.ceil(minutesNeeded / 15) * 15);
 
-		if (newIndicatorIndex > indicatorIndex && indicatorIndex > 0) webkitNotifications.createNotification("icon48.png", "Get Walking!", "You need to walk for " + minutesNeeded  + " minute(s).").show();
-		indicatorIndex = newIndicatorIndex;
+		if (indicatorIndex !== newIndicatorIndex) {
+			if (newIndicatorIndex > indicatorIndex && indicatorIndex > 0) webkitNotifications.createNotification("icon48.png", "Get Walking!", "You need to walk for " + minutesNeeded  + " minute(s).").show();
 
-		var colors = COLORS[indicatorIndex];
-		context.fillStyle = colors[0];
-		context.strokeStyle = colors[1];
-		context.lineWidth = 2;
+			var colors = COLORS[newIndicatorIndex],
+				canvas = document.getElementById("canvas"),
+				context = canvas.getContext("2d");
+			context.clearRect(0, 0, 19, 19);
+			context.fillStyle = colors[0];
+			context.strokeStyle = colors[1];
+			context.lineWidth = 2;
 
-		context.beginPath();
-		context.arc(9.5, 9.5, 8, 0, Math.PI * 2);
-		context.fill(); context.stroke();
+			context.beginPath();
+			context.arc(9.5, 9.5, 8, 0, Math.PI * 2);
+			context.fill(); context.stroke();
 
-		chrome.browserAction.setIcon({
-			imageData: context.getImageData(0, 0, 19, 19)
-		});
+			chrome.browserAction.setIcon({
+				imageData: context.getImageData(0, 0, 19, 19)
+			});
+
+			indicatorIndex = newIndicatorIndex;
+		}
 
 		chrome.browserAction.setBadgeText({
 			text: Math.abs(minutesNeeded) + ""
-		});
-
-		chrome.browserAction.setBadgeBackgroundColor({
-			color: "#677984"
 		});
 
 		chrome.browserAction.setTitle({title: (minutesNeeded > 0 ? "Walk for " : "Rest for ") + Math.abs(minutesNeeded) + " minute(s)"});
