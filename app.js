@@ -66,7 +66,6 @@ app.get("/access-token", function (req, res) {
 	});
 });
 
-// TODO: Verify that this is actually coming from Fitbit
 app.post("/update", function (req, res) {
 	res.send(undefined);
 
