@@ -64,9 +64,9 @@ app.get("/access-token", function (req, res) {
 		user.id = results.encoded_user_id;
 		user.accessToken = token; user.accessTokenSecret = secret;
 
-		user.sockets.each(function (socket) {
-			socket.emit("initialized");
-		});
+		for (var i = 0; i < user.sockets.length; i++) {
+			user.sockets[i].emit("initialized");
+		}
 
 		var url = "https://api.fitbit.com/1/user/-/activities/apiSubscriptions/" + user.id + ".json";
 		auth.getProtectedResource(url, "POST", token, secret, function (error, data) {
@@ -86,9 +86,9 @@ app.post("/activities", function (req, res) {
 			auth.getProtectedResource(url, "GET", user.accessToken, user.accessTokenSecret, (function (sockets) {
 				return function (error, data) {
 					data = JSON.parse(data);
-					sockets.each(function (socket) {
-						socket.emit("activities", data.summary.steps, data.goals.steps);
-					});
+					for (var i = 0; i < sockets.length; i++) {
+						sockets[i].emit("activities", data.summary.steps, data.goals.steps);
+					}
 				};
 			})(user.sockets));
 		}
