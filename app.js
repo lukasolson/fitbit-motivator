@@ -31,6 +31,7 @@ io.sockets.on("connection", function (socket) {
 			user = _.findWhere(users, {id: userId});
 			user.sockets.push(socket);
 		} else {
+			users.push(user);
 			auth.getOAuthRequestToken(function (error, token, secret) {
 				user.requestToken = token; user.requestTokenSecret = secret;
 				socket.emit("requestToken", token);
