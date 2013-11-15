@@ -55,7 +55,7 @@ chrome.browserAction.setBadgeBackgroundColor({color: "#677984"});
 			).show();
 		}
 
-		BackgroundUtils.renderBrowserActionIcon(newIntervalsNeeded);
+		if (newIntervalsNeeded !== intervalsNeeded) BackgroundUtils.renderBrowserActionIcon(newIntervalsNeeded);
 
 		if (newMinutesNeeded > 0) {
 			chrome.browserAction.setTitle({title: "Walk for " + newMinutesNeeded + " minute(s)"});
