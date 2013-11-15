@@ -87,6 +87,9 @@ app.post("/activities", function (req, res) {
 		for (var i = 0; i < data.length; i++) {
 			var url = "https://api.fitbit.com/1/user/-/activities/date/" + data[i].date + ".json",
 				user = users[data[i].ownerId];
+
+			if (!user) return;
+
 			auth.getProtectedResource(url, "GET", user.accessToken, user.accessTokenSecret, (function (sockets) {
 				return function (error, data) {
 					data = JSON.parse(data);
