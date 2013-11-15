@@ -17,7 +17,7 @@ var BackgroundUtils = {
 
 	renderBrowserActionIcon: function (intervalsNeeded) {
 		var context = document.getElementById("canvas").getContext("2d"),
-			palette = this.INDICATOR_COLORS[Math.min(0, Math.max(this.INDICATOR_COLORS.length - 1, intervalsNeeded))];
+			palette = this.INDICATOR_COLORS[Math.max(0, Math.min(this.INDICATOR_COLORS.length - 1, intervalsNeeded))];
 
 		context.clearRect(0, 0, 19, 19);
 		context.lineWidth = 2;
