@@ -102,5 +102,3 @@ app.post("/activities", function (req, res) {
 		}
 	});
 });
-
-// *KG^7cFjmBul
