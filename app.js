@@ -45,7 +45,7 @@ io.sockets.on("connection", function (socket) {
 		var url = "https://api.fitbit.com/1/user/-/activities/date/" + date + ".json";
 		auth.getProtectedResource(url, "GET", user.accessToken, user.accessTokenSecret, function (error, data) {
 			data = JSON.parse(data);
-			socket.emit("activities", data.summary.steps, data.goals.steps);
+			socket.emit("activities", date, data.summary.steps, data.goals.steps);
 		});
 	});
 
@@ -91,14 +91,14 @@ app.post("/activities", function (req, res) {
 
 			if (!user) return;
 
-			auth.getProtectedResource(url, "GET", user.accessToken, user.accessTokenSecret, (function (sockets) {
+			auth.getProtectedResource(url, "GET", user.accessToken, user.accessTokenSecret, (function (date, sockets) {
 				return function (error, data) {
 					data = JSON.parse(data);
 					for (var i = 0; i < sockets.length; i++) {
-						sockets[i].emit("activities", data.summary.steps, data.goals.steps);
+						sockets[i].emit("activities", date, data.summary.steps, data.goals.steps);
 					}
 				};
-			})(user.sockets));
+			})(data[i].date, user.sockets));
 		}
 	});
 });

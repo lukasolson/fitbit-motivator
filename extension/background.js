@@ -22,7 +22,8 @@ chrome.browserAction.setBadgeBackgroundColor({color: "#677984"});
 	});
 
 	var stepsCount, stepsGoal;
-	socket.on("activities", function (newStepsCount, newStepsGoal) {
+	socket.on("activities", function (date, newStepsCount, newStepsGoal) {
+		if (date !== BackgroundUtils.formatDate(new Date())) return;
 		stepsCount = newStepsCount; stepsGoal = newStepsGoal;
 		updateMinutesNeeded(BackgroundUtils.calculateMinutesNeeded(stepsCount, stepsGoal, 100));
 	});
