@@ -31,6 +31,7 @@ io.sockets.on("connection", function (socket) {
 		if (userId in users) {
 			user = users[userId];
 			user.sockets.push(socket);
+			socket.emit("initialized", userId);
 		} else {
 			auth.getOAuthRequestToken(function (error, token, secret) {
 				requestTokenData[token] = {secret: secret, socket: socket};
