@@ -16,10 +16,9 @@ chrome.browserAction.setBadgeBackgroundColor({color: "#677984"});
 	});
 
 	socket.on("initialized", function (userId) {
-		if (newTab && !newTab.active) return; // Another device is initializing for the first time
 		localStorage.setItem("userId", userId);
 		socket.emit("activities", userId, BackgroundUtils.formatDate(new Date()));
-		chrome.tabs.remove(newTab.id);
+		if (newTab && newTab.active) chrome.tabs.remove(newTab.id);
 	});
 
 	var stepsCount, stepsGoal;
@@ -47,7 +46,7 @@ chrome.browserAction.setBadgeBackgroundColor({color: "#677984"});
 	function updateMinutesNeeded(newMinutesNeeded) {
 		if (minutesNeeded === newMinutesNeeded) return;
 
-		var newIntervalsNeeded = newMinutesNeeded / BackgroundUtils.INDICATOR_INTERVAL;
+		var newIntervalsNeeded = Math.ceil(newMinutesNeeded / BackgroundUtils.INDICATOR_INTERVAL);
 		if (newIntervalsNeeded > intervalsNeeded && newIntervalsNeeded > 0) {
 			webkitNotifications.createNotification(
 				"icon48.png",
