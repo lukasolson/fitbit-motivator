@@ -50,7 +50,7 @@ chrome.browserAction.setBadgeBackgroundColor({color: "#677984"});
 		var newIntervalsNeeded = Math.ceil(newMinutesNeeded / BackgroundUtils.INDICATOR_INTERVAL);
 		if (newIntervalsNeeded > intervalsNeeded && newIntervalsNeeded > 0) {
 			webkitNotifications.createNotification(
-				"icon48.png",
+				"images/icon48.png",
 				"Get Walking!",
 				"You need to walk for " + newMinutesNeeded  + " minute(s)."
 			).show();

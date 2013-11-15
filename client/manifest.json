@@ -16,6 +16,6 @@
 		"default_title": "Fitbit Motivator"
 	},
 	"web_accessible_resources": [
-		"icon48.png"
+		"images/icon48.png"
 	]
 }
