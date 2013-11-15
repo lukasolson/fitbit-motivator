@@ -18,7 +18,7 @@ chrome.browserAction.setBadgeBackgroundColor({color: "#677984"});
 	socket.on("initialized", function (userId) {
 		if (newTab && !newTab.active) return; // Another device is initializing for the first time
 		localStorage.setItem("userId", userId);
-		socket.emit("activities", BackgroundUtils.formatDate(new Date()));
+		socket.emit("activities", userId, BackgroundUtils.formatDate(new Date()));
 		chrome.tabs.remove(newTab.id);
 	});
 

@@ -22,24 +22,25 @@ var auth = new (require("oauth").OAuth)(
 io.set("log level", 1);
 server.listen(1114);
 
-var users = [];
+var requestTokenData = {},
+	users = {};
 
 io.sockets.on("connection", function (socket) {
-	var user = {sockets: [socket]};
+	var user;
 	socket.on("initialize", function (userId) {
-		if (userId) {
-			user = _.findWhere(users, {id: userId});
+		if (userId in users) {
+			user = users[userId];
 			user.sockets.push(socket);
 		} else {
-			users.push(user);
 			auth.getOAuthRequestToken(function (error, token, secret) {
-				user.requestToken = token; user.requestTokenSecret = secret;
+				requestTokenData[token] = {secret: secret, socket: socket};
 				socket.emit("requestToken", token);
 			});
 		}
 	});
 
-	socket.on("activities", function (date) {
+	socket.on("activities", function (userId, date) {
+		user = users[userId];
 		var url = "https://api.fitbit.com/1/user/-/activities/date/" + date + ".json";
 		auth.getProtectedResource(url, "GET", user.accessToken, user.accessTokenSecret, function (error, data) {
 			data = JSON.parse(data);
@@ -48,7 +49,7 @@ io.sockets.on("connection", function (socket) {
 	});
 
 	socket.on("disconnect", function () {
-		user.sockets.splice(user.sockets.indexOf(socket));
+		if (user) user.sockets.splice(user.sockets.indexOf(socket), 1);
 	});
 });
 
@@ -56,19 +57,22 @@ app.get("/access-token", function (req, res) {
 	res.send(undefined);
 
 	var requestToken = req.query.oauth_token,
-		user = _.findWhere(users, {requestToken: requestToken}),
-		requestTokenSecret = user.requestTokenSecret,
-		verifier = req.query.oauth_verifier;
-
+		requestTokenSecret = requestTokenData[requestToken].secret,
+		verifier = req.query.oauth_verifier,
+		socket = requestTokenData[requestToken].socket;
 	auth.getOAuthAccessToken(requestToken, requestTokenSecret, verifier, function (error, token, secret, results) {
-		user.id = results.encoded_user_id;
+		var userId = results.encoded_user_id,
+			user = users[userId] || (users[userId] = {
+				id: userId,
+				sockets: []
+			});
+
 		user.accessToken = token; user.accessTokenSecret = secret;
+		user.sockets.push(socket);
 
-		for (var i = 0; i < user.sockets.length; i++) {
-			user.sockets[i].emit("initialized");
-		}
+		socket.emit("initialized", userId);
 
-		var url = "https://api.fitbit.com/1/user/-/activities/apiSubscriptions/" + user.id + ".json";
+		var url = "https://api.fitbit.com/1/user/-/activities/apiSubscriptions/" + userId + ".json";
 		auth.getProtectedResource(url, "POST", token, secret, function (error, data) {
 			// Without this (empty) handler, bad things happen
 		});
@@ -82,7 +86,7 @@ app.post("/activities", function (req, res) {
 		data = JSON.parse(data);
 		for (var i = 0; i < data.length; i++) {
 			var url = "https://api.fitbit.com/1/user/-/activities/date/" + data[i].date + ".json",
-				user = _.findWhere(users, {id: data[i].ownerId});
+				user = users[data[i].ownerId];
 			auth.getProtectedResource(url, "GET", user.accessToken, user.accessTokenSecret, (function (sockets) {
 				return function (error, data) {
 					data = JSON.parse(data);
