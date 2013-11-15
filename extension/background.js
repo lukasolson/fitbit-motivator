@@ -43,7 +43,7 @@ chrome.browserAction.setBadgeBackgroundColor({color: "#677984"});
 		updateMinutesNeeded(BackgroundUtils.calculateMinutesNeeded(stepsCount, stepsGoal, 100));
 	});
 
-	var minutesNeeded, intervalsNeeded;
+	var minutesNeeded, intervalsNeeded = 0;
 	function updateMinutesNeeded(newMinutesNeeded) {
 		if (minutesNeeded === newMinutesNeeded) return;
 
