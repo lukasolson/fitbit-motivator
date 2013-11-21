@@ -1,5 +1,11 @@
 chrome.browserAction.setBadgeBackgroundColor({color: "#677984"});
 
+chrome.browserAction.onClicked.addListener(function(tab) {
+	chrome.tabs.create({
+		url: "https://fitbit.com"
+	});
+});
+
 (function () {
 	var socket = io.connect("http://askullsoon.com:1114"),
 		userId = localStorage.getItem("userId");
@@ -49,7 +55,7 @@ chrome.browserAction.setBadgeBackgroundColor({color: "#677984"});
 		if (minutesNeeded === newMinutesNeeded) return;
 
 		var newIntervalsNeeded = Math.ceil(newMinutesNeeded / BackgroundUtils.INDICATOR_INTERVAL);
-		if (newIntervalsNeeded > intervalsNeeded && newIntervalsNeeded > 0) {
+		if (newIntervalsNeeded > intervalsNeeded && newIntervalsNeeded > 1) {
 			webkitNotifications.createNotification(
 				"images/icon48.png",
 				"Get Walking!",
