@@ -28,6 +28,7 @@ chrome.browserAction.setBadgeBackgroundColor({color: "#677984"});
 		updateMinutesNeeded(BackgroundUtils.calculateMinutesNeeded(stepsCount, stepsGoal, 100));
 	});
 
+	chrome.alarms.clear("fitbitMotivator");
 	chrome.alarms.create("fitbitMotivator", {
 		periodInMinutes: 1
 	});
