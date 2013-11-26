@@ -62,7 +62,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 		if (minutesNeeded === newMinutesNeeded) return;
 
 		var newIntervalsNeeded = Math.ceil(newMinutesNeeded / BackgroundUtils.INDICATOR_INTERVAL);
-		if (typeof newIntervalsNeeded === "undefined" || (newIntervalsNeeded > intervalsNeeded && newIntervalsNeeded > 1)) {
+		if ((typeof intervalsNeeded === "undefined" || newIntervalsNeeded > intervalsNeeded) && newIntervalsNeeded > 1) {
 			webkitNotifications.createNotification(
 				"images/icon48.png",
 				"Get Walking!",
