@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<script src="background-utils.js"></script>
+		<style>
+			* {
+				box-sizing: border-box;
+			}
+
+			html, body {
+				width: 100%;
+				height: 100%;
+				background-color: gray;
+			}
+
+			body {
+				overflow: hidden;
+				width: 50%;
+				height: 100%;
+				margin: auto;
+				padding: 1em;
+				box-shadow: 0 0 1em black;
+				background-color: white;
+				font-family: "Museo", helvetic, arial, sans-serif;
+			}
+
+			img, canvas {
+				vertical-align: bottom;
+			}
+
+			h1 {
+				margin: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>
+			<img src="images/icon48.png" />
+			Fitbit Motivator
+		</h1>
+
+		<h3>What's new?</h3>
+		<p>
+			Everything has changed in this update! You should now see a persistent icon next to the URL bar. (Clicking on it will take you to fitbit.com.) Different colors mean different things:
+		</p>
+		<p>
+			<canvas id="canvas0" width="19" height="19"></canvas> You're on track.<br />
+		</p>
+		<p>
+			<canvas id="canvas1" width="19" height="19"></canvas> You're almost there.<br />
+		</p>
+		<p>
+			<canvas id="canvas2" width="19" height="19"></canvas> You've got some work to do.<br />
+		</p>
+		<p>
+			<canvas id="canvas3" width="19" height="19"></canvas> You need to get out and walk, like now.<br />
+		</p>
+		<p>
+			If you're not on track, an icon badge will let you know how many minutes you need to walk, right now, to get back on track.
+		</p>
+		<script src="changelog.js"></script>
+	</body>
+</html>

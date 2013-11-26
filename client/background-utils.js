@@ -19,6 +19,14 @@ var BackgroundUtils = {
 		var context = document.getElementById("canvas").getContext("2d"),
 			palette = this.INDICATOR_COLORS[Math.max(0, Math.min(this.INDICATOR_COLORS.length - 1, intervalsNeeded))];
 
+		this.renderIcon(context, palette);
+
+		chrome.browserAction.setIcon({
+			imageData: context.getImageData(0, 0, 19, 19)
+		});
+	},
+
+	renderIcon: function (context, palette) {
 		context.clearRect(0, 0, 19, 19);
 		context.lineWidth = 2;
 		context.fillStyle = palette[0];
@@ -27,10 +35,6 @@ var BackgroundUtils = {
 		context.beginPath();
 		context.arc(9.5, 9.5, 8, 0, Math.PI * 2);
 		context.fill(); context.stroke();
-
-		chrome.browserAction.setIcon({
-			imageData: context.getImageData(0, 0, 19, 19)
-		});
 	},
 
 	INDICATOR_COLORS: [
