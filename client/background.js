@@ -1,3 +1,8 @@
+if (!localStorage.getItem("initialized")) {
+	chrome.tabs.create({url: "changelog.html"});
+	localStorage.setItem("initialized", true);
+}
+
 chrome.browserAction.setBadgeBackgroundColor({color: "#677984"});
 
 chrome.browserAction.onClicked.addListener(function(tab) {
@@ -52,12 +57,12 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 		updateMinutesNeeded(BackgroundUtils.calculateMinutesNeeded(stepsCount, stepsGoal, 100));
 	});
 
-	var minutesNeeded, intervalsNeeded = 0;
+	var minutesNeeded, intervalsNeeded;
 	function updateMinutesNeeded(newMinutesNeeded) {
 		if (minutesNeeded === newMinutesNeeded) return;
 
 		var newIntervalsNeeded = Math.ceil(newMinutesNeeded / BackgroundUtils.INDICATOR_INTERVAL);
-		if (newIntervalsNeeded > intervalsNeeded && newIntervalsNeeded > 1) {
+		if (typeof newIntervalsNeeded === "undefined" || (newIntervalsNeeded > intervalsNeeded && newIntervalsNeeded > 1)) {
 			webkitNotifications.createNotification(
 				"images/icon48.png",
 				"Get Walking!",
