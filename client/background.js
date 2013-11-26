@@ -10,7 +10,9 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 	var socket = io.connect("http://askullsoon.com:1114"),
 		userId = localStorage.getItem("userId");
 
-	socket.emit("initialize", userId);
+	socket.on("connect", function () {
+		socket.emit("initialize", userId);
+	});
 
 	var newTab;
 	socket.on("requestToken", function (requestToken) {
