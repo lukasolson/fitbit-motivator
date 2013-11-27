@@ -51,8 +51,9 @@ io.sockets.on("connection", function (socket) {
 			if (error) return console.log(error);
 
 			data = JSON.parse(data);
-			console.log(data);
-			socket.emit("activities", date, data.summary.steps, data.goals.steps);
+
+			var goals = (data && data.goals && data.goals.steps) ? data.goals.steps || 10000;
+			socket.emit("activities", date, data.summary.steps, goals);
 		});
 	});
 
