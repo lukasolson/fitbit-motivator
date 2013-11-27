@@ -52,7 +52,7 @@ io.sockets.on("connection", function (socket) {
 
 			data = JSON.parse(data);
 
-			var goals = (data && data.goals && data.goals.steps) ? data.goals.steps || 10000;
+			var goals = (data && data.goals && data.goals.steps) ? data.goals.steps : 10000;
 			socket.emit("activities", date, data.summary.steps, goals);
 		});
 	});
