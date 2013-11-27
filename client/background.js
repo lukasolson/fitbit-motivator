@@ -78,6 +78,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 				text: "" + newMinutesNeeded
 			});
 		} else if (minutesNeeded > 0) { // Only clear the text if it currently has text
+			chrome.browserAction.setTitle({title: "You're on track to meet your goal."});
 			chrome.browserAction.setBadgeText({text: ""});
 		}
 
