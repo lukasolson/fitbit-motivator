@@ -43,12 +43,15 @@ io.sockets.on("connection", function (socket) {
 	});
 
 	socket.on("activities", function (userId, date) {
+		if (!userId in users) return console.log("No user found with ID: " + userId);
+
 		user = users[userId];
 		var url = "https://api.fitbit.com/1/user/-/activities/date/" + date + ".json";
 		auth.getProtectedResource(url, "GET", user.accessToken, user.accessTokenSecret, function (error, data) {
 			if (error) return console.log(error);
 
 			data = JSON.parse(data);
+			console.log(data);
 			socket.emit("activities", date, data.summary.steps, data.goals.steps);
 		});
 	});
