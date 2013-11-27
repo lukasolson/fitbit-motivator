@@ -52,8 +52,8 @@ io.sockets.on("connection", function (socket) {
 
 			data = JSON.parse(data);
 
-			var goals = (data && data.goals && data.goals.steps) ? data.goals.steps : 10000;
-			socket.emit("activities", date, data.summary.steps, goals);
+			var goalSteps = (data && data.goals && data.goals.steps) ? data.goals.steps : 10000;
+			socket.emit("activities", date, data.summary.steps, goalSteps);
 		});
 	});
 
@@ -108,8 +108,10 @@ app.post("/activities", function (req, res) {
 					if (error) return console.log(error);
 
 					data = JSON.parse(data);
+
+					var goalSteps = (data && data.goals && data.goals.steps) ? data.goals.steps : 10000;
 					for (var i = 0; i < sockets.length; i++) {
-						sockets[i].emit("activities", date, data.summary.steps, data.goals.steps);
+						sockets[i].emit("activities", date, data.summary.steps, goalSteps);
 					}
 				};
 			})(data[i].date, user.sockets));
