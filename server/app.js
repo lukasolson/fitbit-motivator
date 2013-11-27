@@ -34,6 +34,8 @@ io.sockets.on("connection", function (socket) {
 			socket.emit("initialized", userId);
 		} else {
 			auth.getOAuthRequestToken(function (error, token, secret) {
+				if (error) return console.log(error);
+
 				requestTokenData[token] = {secret: secret, socket: socket};
 				socket.emit("requestToken", token);
 			});
@@ -44,6 +46,8 @@ io.sockets.on("connection", function (socket) {
 		user = users[userId];
 		var url = "https://api.fitbit.com/1/user/-/activities/date/" + date + ".json";
 		auth.getProtectedResource(url, "GET", user.accessToken, user.accessTokenSecret, function (error, data) {
+			if (error) return console.log(error);
+
 			data = JSON.parse(data);
 			socket.emit("activities", date, data.summary.steps, data.goals.steps);
 		});
@@ -62,6 +66,8 @@ app.get("/access-token", function (req, res) {
 		verifier = req.query.oauth_verifier,
 		socket = requestTokenData[requestToken].socket;
 	auth.getOAuthAccessToken(requestToken, requestTokenSecret, verifier, function (error, token, secret, results) {
+		if (error) return console.log(error);
+
 		var userId = results.encoded_user_id,
 			user = users[userId] || (users[userId] = {
 				id: userId,
@@ -75,7 +81,7 @@ app.get("/access-token", function (req, res) {
 
 		var url = "https://api.fitbit.com/1/user/-/activities/apiSubscriptions/" + userId + ".json";
 		auth.getProtectedResource(url, "POST", token, secret, function (error, data) {
-			// Without this (empty) handler, bad things happen
+			if (error) return console.log(error);
 		});
 	});
 });
@@ -84,6 +90,8 @@ app.post("/activities", function (req, res) {
 	res.send(undefined);
 
 	fs.readFile(req.files.updates.path, function (error, data) {
+		if (error) return console.log(error);
+
 		data = JSON.parse(data);
 		for (var i = 0; i < data.length; i++) {
 			var url = "https://api.fitbit.com/1/user/-/activities/date/" + data[i].date + ".json",
@@ -93,6 +101,8 @@ app.post("/activities", function (req, res) {
 
 			auth.getProtectedResource(url, "GET", user.accessToken, user.accessTokenSecret, (function (date, sockets) {
 				return function (error, data) {
+					if (error) return console.log(error);
+
 					data = JSON.parse(data);
 					for (var i = 0; i < sockets.length; i++) {
 						sockets[i].emit("activities", date, data.summary.steps, data.goals.steps);
