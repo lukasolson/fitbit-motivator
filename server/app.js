@@ -34,7 +34,7 @@ io.sockets.on("connection", function (socket) {
 			socket.emit("initialized", userId);
 		} else {
 			auth.getOAuthRequestToken(function (error, token, secret) {
-				if (error) return console.log(error);
+				if (error) return console.log("getOAuthRequestToken", error);
 
 				requestTokenData[token] = {secret: secret, socket: socket};
 				socket.emit("requestToken", token);
@@ -48,7 +48,7 @@ io.sockets.on("connection", function (socket) {
 		user = users[userId];
 		var url = "https://api.fitbit.com/1/user/-/activities/date/" + date + ".json";
 		auth.getProtectedResource(url, "GET", user.accessToken, user.accessTokenSecret, function (error, data) {
-			if (error) return console.log(error);
+			if (error) return console.log(url, error);
 
 			data = JSON.parse(data);
 
@@ -85,7 +85,7 @@ app.get("/access-token", function (req, res) {
 
 		var url = "https://api.fitbit.com/1/user/-/activities/apiSubscriptions/" + userId + ".json";
 		auth.getProtectedResource(url, "POST", token, secret, function (error, data) {
-			if (error) return console.log(error);
+			if (error) return console.log(url, error);
 		});
 	});
 });
@@ -105,7 +105,7 @@ app.post("/activities", function (req, res) {
 
 			auth.getProtectedResource(url, "GET", user.accessToken, user.accessTokenSecret, (function (date, sockets) {
 				return function (error, data) {
-					if (error) return console.log(error);
+					if (error) return console.log(url, error);
 
 					data = JSON.parse(data);
 
